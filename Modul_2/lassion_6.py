@@ -98,7 +98,7 @@ for i in num1:
             kr = n % (n1 + n2)
             if kr == 0:
                 pairs.append([n1, n2])
-                result = result + str(pn1) + str(pn2)
+                result = result + str(n1) + str(n2)
 
 print('Парные числа', *pairs)
 print('Введите пароль', result)
