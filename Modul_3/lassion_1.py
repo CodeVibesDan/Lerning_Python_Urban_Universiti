@@ -41,17 +41,17 @@ def count_calls():
 def string_info(string):
     string_up = string.upper()
     string_low = string.lower()
-    string_len = len(string) // 2
+    string_len = len(string)
     count_calls()
     return string_up, string_low, string_len
 
 
 def is_contains(string, list_to_search):
     string_low = string.lower()
-    for item in list_to_search:
-        if string_low == item:
-            return True
     count_calls()
+    for item in list_to_search:
+        if string_low == item.lower():
+            return True
     return False
 
 
