@@ -40,7 +40,7 @@ def send_email(message, recipient, sender = "university.help@gmail.com"):
     if not valid_email(sender) or not valid_email(recipient):
         print(f"Невозможно отправить письмо с адреса {sender} на адрес {recipient}")
         return
-    print(f"Письмо успешно отправлено с адреса {sender} на адрес {recipient}. Сообщение: {message}")
+    # print(f"Письмо успешно отправлено с адреса {sender} на адрес {recipient}. Сообщение: {message}")
 
     if sender == recipient:
         print("Нельзя отправить письмо самому себе!")
