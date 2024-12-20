@@ -1,0 +1,1 @@
+def fake_divide(first, second):    if second == 0:        print("Error")    else:        result = float(first / second)        print(result)
