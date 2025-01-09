@@ -6,7 +6,7 @@ class User:
     """
     def __init__(self, nickname, password, age):
         self.nickname = nickname # список объектов USer
-        self.password =  hash(password)
+        self.password =  hash(password) # Хэшированный пароль
         self.age = age # возраст, число
 
     def __str__(self):
