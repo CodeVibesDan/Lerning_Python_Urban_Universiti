@@ -49,11 +49,13 @@ class UrTube:
         то current_user меняется на найденного. Помните, что password передаётся в виде строки,
         а сравнивается по хэшу.
         """
+        password_hash = hash(password)
         for user in self.users:
-            if user.nickname == nickname and user.password == password:
+            if user.nickname == nickname and user.password == password == password_hash:
                 self.current_user = user
-                return True
-        return False
+                print(f"Пользователь {nickname} вошёл в систему.")
+                return
+        print("Неверный логин или пароль.")
 
 
     def register(self, nickname, password, age):
@@ -64,20 +66,29 @@ class UrTube:
         выводит на экран: "Пользователь {nickname} уже существует".
         После регистрации, вход выполняется автоматически.
         """
-        if self.log_in(nickname, password):
-            print(f"Пользователь {nickname} уже существует")
-        else:
-            self.users.append(User(nickname, password, age))
-            self.current_user = self.users[-1]
-            print(f"Пользователь {str(self.users[-1])} успешно зарегистрирован.")
+        # if self.log_in(nickname, password):
+        #     print(f"Пользователь {nickname} уже существует")
+        # else:
+        #     self.users.append(User(nickname, password, age))
+        #     self.current_user = self.users[-1]
+        #     print(f"Пользователь {str(self.users[-1])} успешно зарегистрирован.")
 
+        for user in self.users:
+            if user.nickname == nickname:
+                print(f"Пользователь {nickname} уже существует")
+
+        new_user = User(nickname, password, age)
+        self.users.append(new_user)
+        self.current_user = new_user
+        print(f"Пользователь {nickname} успешно зарегистрирован и вошёл в систему.")
 
     def loh_out(self):
         """
         Метод log_out для сброса текущего пользователя на None.
         """
-        self.current_user = None
-        print("Вы вышли из аккаунта")
+        if self.current_user:
+            print(f"Пользователь {self.current_user.nickname} вышел из системы.")
+            self.current_user = None
 
     def add(self, *videos):
         """
@@ -86,8 +97,11 @@ class UrTube:
         названием видео ещё не существует. В противном случае ничего не происходит.
         """
         for video in videos:
-            if str(video) not in self.videos:
+            if video.title not in [v.title for v in self.videos]:
                 self.videos.append(video)
+                print(f"Видео '{video.title}' добавлено.")
+            else:
+                print(f"Видео '{video.title}' уже существует на платформе.")
 
     def get_videos(self,  search_term):
         """
@@ -115,22 +129,25 @@ class UrTube:
         если же находит - ведётся отчёт в консоль на какой секунде ведётся просмотр.
         После текущее время просмотра данного видео сбрасывается.
         """
-        if self.current_user is None:
-            print("Войдите в аккаунт, чтобы смотреть видео")
+        if not self.current_user:
+            print("Войдите в аккаунт, чтобы смотреть видео.")
             return
 
-        for video in self.videos:
-            if video.title == title:
-                if video.adult_mode and self.current_user.age < 18:
-                    print("Вам нет 18 лет, пожалуйста покиньте страницу")
-                    return
-                for second in range(video.time_now + 1, video.duration + 1):
-                    print(second, end=" ", flush=True)
-                    time.sleep(1)
-                print("Конец видео")
-                video.time_now = 0
-                return
-        print("Видео не найдено")
+        video = next((v for v in self.videos if v.title == title), None)
+        if not video:
+            print(f"Видео '{title}' не найдено.")
+            return
+
+        if video.adult_mode and self.current_user.age < 18:
+            print("Вам нет 18 лет, пожалуйста покиньте страницу.")
+            return
+
+        print(f"Просмотр видео: {video.title}")
+        for second in range(video.time_now + 1, video.duration + 1):
+            print(second, end=" ", flush=True)
+            time.sleep(0.2)  # Имитация просмотра
+        print("\nКонец видео")
+        video.time_now = 0
 
 
 # Код для проверки:
@@ -144,7 +161,7 @@ ur.add(v1, v2)
 # Проверка поиска
 print(ur.get_videos('лучший'))
 print(ur.get_videos('ПРОГ'))
-#
+
 # Проверка на вход пользователя и возрастное ограничение
 ur.watch_video('Для чего девушкам парень программист?')
 ur.register('vasya_pupkin', 'lolkekcheburek', 13)
@@ -155,5 +172,6 @@ ur.watch_video('Для чего девушкам парень программи
 # Проверка входа в другой аккаунт
 ur.register('vasya_pupkin', 'F8098FM8fjm9jmi', 55)
 print(ur.current_user)
+
 # Попытка воспроизведения несуществующего видео
 ur.watch_video('Лучший язык программирования 2024 года!')
